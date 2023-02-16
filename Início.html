@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html align=center>
+<head>
+  <meta charset="UTF-8">
+  <title>Pensamentos</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <nav>
+      <ul>
+        <li><a href="#">Língua</a></li>
+        <li><a href="#">Categorias</a></li>
+        <li><a href="#">Meus Posts</a></li>
+      </ul>
+      <button id="new-post-button">Criar Post</button>
+    </nav>
+  </header>
+
+  <main>
+    <main>
+  <div class="create-post">
+    <h2>Create Post</h2>
+    <form method="post" action="save_post.php">
+      <label for="title">Title:</label>
+      <input type="text" id="title" name="title" required>
+
+      <label for="content">Content:</label>
+      <textarea id="content" name="content" rows="8" cols="80" required></textarea>
+
+      <input type="submit" value="Save">
+    </form>
+  </div>
+
+  <div class="feed">
+    <h2>Latest Posts</h2>
+    <ul>
+      <!-- display the latest posts as before -->
+    </ul>
+  </div>
+</main>
+
+<?php
+// connect to the database
+$servername = "localhost";
+$username = "your_username";
+$password = "your_password";
+$dbname = "your_database_name";
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+if ($conn->connect_error) {
+  die("Connection failed: " . $conn->connect_error);
+}
+
+// prepare the SQL statement to insert the new post
+$title = $_POST["title"];
+$content = $_POST["content"];
+$sql = "INSERT INTO posts (title, content) VALUES ('$title', '$content')";
+
+// execute the SQL statement
+if ($conn->query($sql) === TRUE) {
+  echo "New post created successfully";
+} else {
+  echo "Error: " . $sql . "<br>" . $conn->error;
+}
+
+$conn->close();
+?>
+<script>
+     // JavaScript code goes here
+document.querySelector("form").addEventListener("submit", function(event) {
+  event.preventDefault(); // prevent the form from being submitted
+
+  // send an AJAX request to the PHP file
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", "save_post.php", true);
+  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4 && xhr.status === 200) {
+      // display the message returned by the PHP file
+      alert(xhr.responseText);
+    }
+  };
+  var data = "title=" + encodeURIComponent(document.getElementById("title").value) +
+             "&content=" + encodeURIComponent(document.getElementById("content").value);
+  xhr.send(data);
+});
+</script>
+
+Create a MySQL table called posts with columns id (auto-increment), title, and content:
+CREATE TABLE posts (
+  id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  content TEXT NOT NULL
+);
+    <div class="feed">
+      <h2>Pensamentos</h2>
+      <ul id="posts-list">
+        <li>
+          <a href="post1.html">
+            <img src="https://via.placeholder.com/150" alt="Post Image">
+            <p>Here's a post from my social media app</p>
+          </a>
+        </li>
+        <li>
+          <a href="post2.html">
+            <img src="https://via.placeholder.com/150" alt="Post Image">
+            <p>Another post from my social media app</p>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </main>
+
+  <script src="main.js"></script>
+  <script>
+    const newPostButton = document.getElementById('new-post-button');
+    const postsList = document.getElementById('posts-list');
+
+    newPostButton.addEventListener('click', () => {
+      const title = prompt('Insira o título do seu post:');
+      const content = prompt('Escreva o conteúdo do seu post:');
+      const post = document.createElement('li');
+      post.innerHTML = `
+        <a href="#">
+          <img src="https://via.placeholder.com/150" alt="Post Image">
+          <h3>${title}</h3>
+          <p>${content}</p>
+        </a>
+      `;
+      postsList.appendChild(post);
+    });
+  </script>
+</body>
+</html>
